@@ -5,8 +5,11 @@ const fs = require('fs');
 const ALPHABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 let totalPoints = 0;
 
+const rucksacks = [];
+
 fs.readFileSync('input.txt', 'utf-8').split(/\r?\n/).forEach(line => {
     if (line) {
+        rucksacks.push(line);
         const firstLetters = [...line.substring(0, (line.length / 2))];
         const secondLetters = [...line.substring(line.length / 2)];
 
@@ -17,4 +20,18 @@ fs.readFileSync('input.txt', 'utf-8').split(/\r?\n/).forEach(line => {
     }
 });
 
-console.log(totalPoints);
+const chunkSize = 3;
+let prioritiesSum = 0;
+let rounds = 1;
+
+for(let i = 0; i < rucksacks.length; i += chunkSize) {
+    const [first, second, third] = rucksacks.slice(i, i + chunkSize).map(line => [...line]);
+    const intersection = first.find(x => second.includes(x) && third.includes(x));
+    console.log(`Round ${rounds++}: Common letter: ${intersection}, worth: ${ALPHABET.indexOf(intersection) + 1}`)
+    if (ALPHABET.indexOf(intersection)) {
+        prioritiesSum += ALPHABET.indexOf(intersection) + 1
+    }
+}
+
+
+console.log(prioritiesSum);
